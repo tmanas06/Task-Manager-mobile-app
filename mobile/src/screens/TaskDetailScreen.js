@@ -139,7 +139,7 @@ const TaskDetailScreen = ({ route, navigation }) => {
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: theme.text }]}>Task Details</Text>
         <View style={styles.headerActions}>
-          {isAdmin && !isEditing ? (
+          {!isEditing ? (
             <>
               <TouchableOpacity style={[styles.headerIconButton, { backgroundColor: theme.background }]} onPress={() => setIsEditing(true)}>
                 <Ionicons name="create-outline" size={22} color={theme.primary} />
