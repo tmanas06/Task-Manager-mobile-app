@@ -36,7 +36,10 @@ const TaskListScreen = ({ navigation }) => {
   const { user, isAdmin, activeOrganization, logout } = useAuth();
   const { theme, themeMode, toggleTheme, isDark } = useTheme();
   const { setActive, userMemberships } = useOrganizationList({
-    userMemberships: true,
+    userMemberships: {
+      infinite: true,
+      pageSize: 25,
+    },
   });
 
   const [tasks, setTasks] = useState([]);
