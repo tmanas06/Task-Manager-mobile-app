@@ -13,6 +13,7 @@ import {
   Pressable,
   Alert,
   Clipboard,
+  Share,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -125,12 +126,17 @@ const TaskListScreen = ({ navigation }) => {
     setFilteredTasks(result);
   };
 
-  const copyInviteLink = () => {
-    if (!activeOrganization) return;
-    // Simulate a deep link
-    const link = `taskmanager://join?code=${activeOrganization.joinCode}`;
-    Clipboard.setString(activeOrganization.joinCode);
-    Alert.alert('Copied!', `Share this code with your team: ${activeOrganization.joinCode}`);
+  const shareInvite = async () => {
+    if (!activeOrganization?.joinCode) return;
+    try {
+      const message = `Join my workspace "${activeOrganization.name}" on TaskManager!\n\nJoin Code: ${activeOrganization.joinCode}\n\nDownload the app and enter the code to join the team.`;
+      const result = await Share.share({
+        message,
+        title: `Invite to ${activeOrganization.name}`,
+      });
+    } catch (error) {
+      Alert.alert('Error', 'Failed to share invite.');
+    }
   };
 
   const renderHeader = () => (
@@ -237,6 +243,17 @@ const TaskListScreen = ({ navigation }) => {
 
             <TouchableOpacity 
               style={styles.orgOption} 
+              onPress={() => {
+                setShowOrgModal(false);
+                shareInvite();
+              }}
+            >
+              <Ionicons name="share-social-outline" size={20} color={theme.primary} />
+              <Text style={[styles.orgOptionText, { color: theme.primary, marginLeft: 12 }]}>Share Workspace Invite</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.orgOption} 
               onPress={async () => {
                 setShowOrgModal(false);
                 try {
@@ -271,8 +288,8 @@ const TaskListScreen = ({ navigation }) => {
             </Text>
             <View style={[styles.codeBox, { backgroundColor: theme.background, borderColor: theme.border }]}>
                 <Text style={[styles.codeText, { color: theme.text }]}>{activeOrganization?.joinCode}</Text>
-                <TouchableOpacity style={[styles.copyButton, { backgroundColor: theme.primary }]} onPress={copyInviteLink}>
-                    <Ionicons name="copy-outline" size={20} color="#FFF" />
+                <TouchableOpacity style={[styles.copyButton, { backgroundColor: theme.primary }]} onPress={shareInvite}>
+                    <Ionicons name="share-outline" size={20} color="#FFF" />
                 </TouchableOpacity>
             </View>
             <Text style={[styles.codeHint, { color: theme.textSecondary }]}>Tell them to choose "Join Team" and enter this code.</Text>

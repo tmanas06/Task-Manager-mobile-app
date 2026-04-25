@@ -30,11 +30,12 @@ export const AuthProvider = ({ children }) => {
     const syncUserAndOrg = async () => {
       if (isLoaded && isSignedIn && clerkUser) {
         try {
+          const storedToken = await AsyncStorage.getItem('authToken');
           const token = await getToken();
           if (!token) return;
 
-          // Only sync user if we don't have one or if it's a new session
-          if (!user) {
+          // Sync User if state is missing or token is missing from storage
+          if (!user || !storedToken) {
             const response = await loginWithClerk(token, clerkUser);
             if (response.success && isMounted) {
               await AsyncStorage.setItem('authToken', response.data.token);
