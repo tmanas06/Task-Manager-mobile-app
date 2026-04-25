@@ -9,7 +9,7 @@ const router = express.Router();
 router.use(verifyToken);
 
 // @route   GET /api/users
-// @desc    Get all users (admin only — for assignment picker)
-router.get('/', requireRole('admin'), getAllUsers);
+// @desc    Get all users (for assignment picker)
+router.get('/', getAllUsers);
 
 module.exports = router;

@@ -25,10 +25,9 @@ router.get('/', getAllTasks);
 router.get('/my', getMyTasks);
 
 // @route   POST /api/tasks
-// @desc    Create a new task (admin only)
+// @desc    Create a new task
 router.post(
   '/',
-  requireRole('admin'),
   [
     body('title')
       .trim()
@@ -69,10 +68,9 @@ router.patch(
 );
 
 // @route   PUT /api/tasks/:id
-// @desc    Update full task (admin only)
+// @desc    Update full task
 router.put(
   '/:id',
-  requireRole('admin'),
   [
     body('title')
       .optional()
@@ -97,7 +95,7 @@ router.put(
 );
 
 // @route   DELETE /api/tasks/:id
-// @desc    Delete task (admin only)
-router.delete('/:id', requireRole('admin'), deleteTask);
+// @desc    Delete task
+router.delete('/:id', deleteTask);
 
 module.exports = router;

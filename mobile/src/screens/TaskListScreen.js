@@ -44,29 +44,27 @@ const TaskListScreen = ({ navigation }) => {
   const fabScale = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (isAdmin) {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(fabScale, {
-            toValue: 1,
-            duration: 600,
-            easing: Easing.elastic(1.2),
-            useNativeDriver: true,
-          }),
-          Animated.timing(fabScale, {
-            toValue: 0.95,
-            duration: 1500,
-            useNativeDriver: true,
-          }),
-          Animated.timing(fabScale, {
-            toValue: 1,
-            duration: 1500,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    }
-  }, [isAdmin]);
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(fabScale, {
+          toValue: 1,
+          duration: 600,
+          easing: Easing.elastic(1.2),
+          useNativeDriver: true,
+        }),
+        Animated.timing(fabScale, {
+          toValue: 0.95,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fabScale, {
+          toValue: 1,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
 
   // Fetch tasks when screen focuses
   useFocusEffect(
@@ -304,22 +302,20 @@ const TaskListScreen = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
       />
 
-      {isAdmin ? (
-        <Animated.View
-          style={[
-            styles.fabWrapper,
-            { transform: [{ scale: fabScale }] },
-          ]}
+      <Animated.View
+        style={[
+          styles.fabWrapper,
+          { transform: [{ scale: fabScale }] },
+        ]}
+      >
+        <TouchableOpacity
+          style={[styles.fab, { backgroundColor: theme.primary, shadowColor: theme.primary }]}
+          onPress={() => navigation.navigate('CreateTask')}
+          activeOpacity={0.8}
         >
-          <TouchableOpacity
-            style={[styles.fab, { backgroundColor: theme.primary, shadowColor: theme.primary }]}
-            onPress={() => navigation.navigate('CreateTask')}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="add" size={28} color="#FFFFFF" />
-          </TouchableOpacity>
-        </Animated.View>
-      ) : null}
+          <Ionicons name="add" size={28} color="#FFFFFF" />
+        </TouchableOpacity>
+      </Animated.View>
     </View>
   );
 };

@@ -25,13 +25,16 @@ export const AuthProvider = ({ children }) => {
     const syncUserWithBackend = async () => {
       if (isLoaded && isSignedIn && clerkUser) {
         try {
-          const token = await getToken();
-          const response = await loginWithClerk(token, clerkUser);
-          
-          if (response.success) {
-            const authToken = response.data.token;
-            await AsyncStorage.setItem('authToken', authToken);
-            setUser(response.data.user);
+          const storedToken = await AsyncStorage.getItem('authToken');
+          if (!storedToken || !user) {
+            const token = await getToken();
+            const response = await loginWithClerk(token, clerkUser);
+            
+            if (response.success) {
+              const authToken = response.data.token;
+              await AsyncStorage.setItem('authToken', authToken);
+              setUser(response.data.user);
+            }
           }
         } catch (error) {
           console.error('Failed to sync user with backend:', error);
