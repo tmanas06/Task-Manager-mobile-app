@@ -20,7 +20,7 @@ import { useTheme } from '../context/ThemeContext';
 WebBrowser.maybeCompleteAuthSession();
 
 const LoginScreen = () => {
-  const { theme, isDark } = useTheme();
+  const { theme, themeMode, isDark } = useTheme();
   const [error, setError] = useState('');
   const [loadingProvider, setLoadingProvider] = useState(null);
 
@@ -115,45 +115,55 @@ const LoginScreen = () => {
     }
   };
 
+  const renderBackground = () => (
+    <View style={StyleSheet.absoluteFill}>
+       <View style={[styles.glowBlob, { top: -100, right: -100, backgroundColor: theme.primary + '30', width: 400, height: 400 }]} />
+       <View style={[styles.glowBlob, { bottom: -50, left: -100, backgroundColor: theme.primary + '20', width: 350, height: 350 }]} />
+    </View>
+  );
+
   if (pendingVerification) {
     return (
       <KeyboardAvoidingView style={[styles.container, { backgroundColor: theme.background }]} behavior="padding">
+        {renderBackground()}
         <View style={styles.scrollContent}>
-          <Text style={[styles.appName, { color: theme.text, textAlign: 'center' }]}>VERIFY EMAIL</Text>
-          <Text style={[styles.subtitle, { color: theme.textSecondary, textAlign: 'center', marginBottom: 40 }]}>
-            Enter the code sent to your email
-          </Text>
+          <View style={[styles.glassCard, { backgroundColor: theme.glass, borderColor: theme.glassBorder }]}>
+            <Text style={[styles.appName, { color: theme.text, textAlign: 'center' }]}>VERIFY EMAIL</Text>
+            <Text style={[styles.subtitle, { color: theme.textSecondary, textAlign: 'center', marginBottom: 40 }]}>
+              Enter the code sent to your email
+            </Text>
 
-          <TextInput
-            style={[styles.input, { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }]}
-            placeholder="Verification Code"
-            placeholderTextColor={theme.textSecondary}
-            value={code}
-            onChangeText={setCode}
-            keyboardType="number-pad"
-          />
+            <TextInput
+              style={[styles.input, { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: theme.glassBorder, color: theme.text }]}
+              placeholder="Verification Code"
+              placeholderTextColor={theme.textSecondary}
+              value={code}
+              onChangeText={setCode}
+              keyboardType="number-pad"
+            />
 
-          <TouchableOpacity
-            style={[styles.loginButton, { backgroundColor: theme.primary }]}
-            onPress={handleVerify}
-            disabled={loadingProvider === 'verify'}
-          >
-            {loadingProvider === 'verify' ? <ActivityIndicator color="#FFF" /> : <Text style={styles.loginButtonText}>VERIFY</Text>}
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.loginButton, { backgroundColor: theme.primary }]}
+              onPress={handleVerify}
+              disabled={loadingProvider === 'verify'}
+            >
+              {loadingProvider === 'verify' ? <ActivityIndicator color="#FFF" /> : <Text style={styles.loginButtonText}>VERIFY</Text>}
+            </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={{ marginTop: 20, alignItems: 'center' }} 
-            onPress={async () => {
-              try {
-                await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-                Alert.alert('Code Resent', 'A new verification code has been sent to your email.');
-              } catch (err) {
-                Alert.alert('Error', err.errors?.[0]?.message || 'Failed to resend code');
-              }
-            }}
-          >
-            <Text style={{ color: theme.textSecondary, fontWeight: '700', fontSize: 13 }}>DIN'T RECEIVE CODE? RESEND</Text>
-          </TouchableOpacity>
+            <TouchableOpacity 
+                style={{ marginTop: 24, alignItems: 'center' }} 
+                onPress={async () => {
+                try {
+                    await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+                    Alert.alert('Code Resent', 'A new verification code has been sent to your email.');
+                } catch (err) {
+                    Alert.alert('Error', err.errors?.[0]?.message || 'Failed to resend code');
+                }
+                }}
+            >
+                <Text style={{ color: theme.textSecondary, fontWeight: '700', fontSize: 13, letterSpacing: 1 }}>DIN'T RECEIVE CODE? RESEND</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </KeyboardAvoidingView>
     );
@@ -164,25 +174,26 @@ const LoginScreen = () => {
       style={[styles.container, { backgroundColor: theme.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
+      {renderBackground()}
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Text style={[styles.appName, { color: theme.text }]}>TASKMANAGER</Text>
           <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-            {isSignUp ? 'Create your professional account' : 'Enterprise productivity platform'}
+            {isSignUp ? 'Professional Onboarding' : 'Enterprise productivity platform'}
           </Text>
         </View>
 
         {error ? (
-          <View style={[styles.errorBanner, { backgroundColor: '#FEE2E2', borderColor: '#FCA5A5' }]}>
+          <View style={[styles.errorBanner, { backgroundColor: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.2)' }]}>
             <Ionicons name="alert-circle" size={18} color="#EF4444" />
-            <Text style={[styles.errorText, { color: '#B91C1C' }]}>{error}</Text>
+            <Text style={[styles.errorText, { color: '#EF4444' }]}>{error}</Text>
           </View>
         ) : null}
 
-        <View style={styles.form}>
+        <View style={[styles.glassCard, { backgroundColor: theme.glass, borderColor: theme.glassBorder }]}>
           {isSignUp && (
             <TextInput
-              style={[styles.input, { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }]}
+              style={[styles.input, { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: theme.glassBorder, color: theme.text }]}
               placeholder="First Name"
               placeholderTextColor={theme.textSecondary}
               value={firstName}
@@ -190,7 +201,7 @@ const LoginScreen = () => {
             />
           )}
           <TextInput
-            style={[styles.input, { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }]}
+            style={[styles.input, { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: theme.glassBorder, color: theme.text }]}
             placeholder="Email Address"
             placeholderTextColor={theme.textSecondary}
             value={emailAddress}
@@ -199,7 +210,7 @@ const LoginScreen = () => {
             keyboardType="email-address"
           />
           <TextInput
-            style={[styles.input, { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }]}
+            style={[styles.input, { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: theme.glassBorder, color: theme.text }]}
             placeholder="Password"
             placeholderTextColor={theme.textSecondary}
             value={password}
@@ -221,19 +232,20 @@ const LoginScreen = () => {
 
           <TouchableOpacity style={styles.toggleButton} onPress={() => { setIsSignUp(!isSignUp); setError(''); }}>
             <Text style={[styles.toggleText, { color: theme.textSecondary }]}>
-              {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+              {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
+              <Text style={{ color: theme.primary }}>{isSignUp ? 'Sign In' : 'Sign Up'}</Text>
             </Text>
           </TouchableOpacity>
 
           <View style={styles.dividerContainer}>
-            <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
+            <View style={[styles.dividerLine, { backgroundColor: theme.textSecondary }]} />
             <Text style={[styles.dividerText, { color: theme.textSecondary }]}>OR CONTINUE WITH</Text>
-            <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
+            <View style={[styles.dividerLine, { backgroundColor: theme.textSecondary }]} />
           </View>
 
           <View style={styles.socialContainer}>
             <TouchableOpacity
-              style={[styles.socialButton, { backgroundColor: theme.surface, borderColor: theme.border }]}
+              style={[styles.socialButton, { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: theme.glassBorder }]}
               onPress={() => onSelectAuth('google')}
               disabled={!!loadingProvider}
             >
@@ -242,7 +254,7 @@ const LoginScreen = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.socialButton, { backgroundColor: theme.surface, borderColor: theme.border }]}
+              style={[styles.socialButton, { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: theme.glassBorder }]}
               onPress={() => onSelectAuth('apple')}
               disabled={!!loadingProvider}
             >
@@ -253,7 +265,7 @@ const LoginScreen = () => {
         </View>
 
         <View style={styles.footer}>
-          <Text style={[styles.footerText, { color: theme.textSecondary }]}> </Text>
+          <Text style={[styles.footerText, { color: theme.textSecondary }]}>Powering Hybrid Teams Globally</Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -262,27 +274,29 @@ const LoginScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scrollContent: { flexGrow: 1, justifyContent: 'center', padding: 32 },
-  header: { alignItems: 'center', marginBottom: 50, marginTop: 20 },
-  appName: { fontSize: 28, fontWeight: '900', letterSpacing: 3, marginBottom: 8 },
-  subtitle: { fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1.5, opacity: 0.7 },
-  errorBanner: { flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 12, marginBottom: 24, borderWidth: 1 },
-  errorText: { fontSize: 13, fontWeight: '600', marginLeft: 10, flex: 1 },
-  form: { width: '100%' },
-  input: { borderRadius: 12, padding: 18, fontSize: 16, borderWidth: 1, marginBottom: 16, fontWeight: '500' },
-  loginButton: { borderRadius: 12, height: 60, justifyContent: 'center', alignItems: 'center', marginTop: 10, elevation: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8 },
-  loginButtonText: { color: '#FFF', fontSize: 16, fontWeight: '900', letterSpacing: 1.5 },
+  scrollContent: { flexGrow: 1, justifyContent: 'center', padding: 24, paddingTop: 60 },
+  glowBlob: { position: 'absolute', borderRadius: 200, opacity: 1 },
+  header: { alignItems: 'center', marginBottom: 40, marginTop: 40 },
+  logoIcon: { width: 64, height: 64, borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginBottom: 20, elevation: 15, shadowColor: '#3B82F6', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.5, shadowRadius: 15 },
+  appName: { fontSize: 32, fontWeight: '900', letterSpacing: 4, marginBottom: 8 },
+  subtitle: { fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 2, opacity: 0.8 },
+  errorBanner: { flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 16, marginBottom: 24, borderWidth: 1 },
+  errorText: { fontSize: 13, fontWeight: '700', marginLeft: 10, flex: 1 },
+  glassCard: { padding: 24, borderRadius: 32, borderWidth: 1, width: '100%', elevation: 2 },
+  input: { borderRadius: 16, padding: 18, fontSize: 16, borderWidth: 1, marginBottom: 16, fontWeight: '600' },
+  loginButton: { borderRadius: 16, height: 64, justifyContent: 'center', alignItems: 'center', marginTop: 10, elevation: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 12 },
+  loginButtonText: { color: '#FFF', fontSize: 16, fontWeight: '900', letterSpacing: 2 },
   loginButtonDisabled: { opacity: 0.6 },
-  toggleButton: { marginTop: 24, alignItems: 'center', padding: 10 },
-  toggleText: { fontSize: 14, fontWeight: '700', letterSpacing: 0.3 },
-  dividerContainer: { flexDirection: 'row', alignItems: 'center', marginVertical: 40 },
-  dividerLine: { flex: 1, height: 1, opacity: 0.3 },
-  dividerText: { fontSize: 10, fontWeight: '800', marginHorizontal: 16, letterSpacing: 1.5, opacity: 0.6 },
-  socialContainer: { flexDirection: 'row', justifyContent: 'space-between', gap: 16 },
-  socialButton: { flex: 1, height: 56, borderRadius: 12, borderWidth: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' },
-  socialButtonText: { marginLeft: 10, fontSize: 14, fontWeight: '700' },
-  footer: { marginTop: 50, alignItems: 'center', paddingBottom: 20 },
-  footerText: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1.5, opacity: 0.4 },
+  toggleButton: { marginTop: 24, alignItems: 'center', padding: 8 },
+  toggleText: { fontSize: 14, fontWeight: '700' },
+  dividerContainer: { flexDirection: 'row', alignItems: 'center', marginVertical: 32 },
+  dividerLine: { flex: 1, height: 1, opacity: 0.1 },
+  dividerText: { fontSize: 10, fontWeight: '900', marginHorizontal: 16, letterSpacing: 1.5, opacity: 0.5 },
+  socialContainer: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
+  socialButton: { flex: 1, height: 56, borderRadius: 16, borderWidth: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' },
+  socialButtonText: { marginLeft: 10, fontSize: 14, fontWeight: '800' },
+  footer: { marginTop: 40, alignItems: 'center', paddingBottom: 20 },
+  footerText: { fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1.5, opacity: 0.3 },
 });
 
 export default LoginScreen;

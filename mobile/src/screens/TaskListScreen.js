@@ -223,7 +223,7 @@ const TaskListScreen = ({ navigation }) => {
       {/* Org Switcher Modal */}
       <Modal visible={showOrgModal} transparent animationType="fade" onRequestClose={() => setShowOrgModal(false)}>
         <Pressable style={styles.modalOverlay} onPress={() => setShowOrgModal(false)}>
-          <View style={[styles.modalContent, { backgroundColor: theme.surface }]}>
+          <View style={[styles.modalContent, { backgroundColor: theme.glass, borderColor: theme.glassBorder }]}>
             <Text style={[styles.modalTitle, { color: theme.text }]}>Workspaces</Text>
             {userMemberships.data?.map((m) => (
               <TouchableOpacity
@@ -281,7 +281,7 @@ const TaskListScreen = ({ navigation }) => {
       {/* Invite Modal */}
       <Modal visible={showInviteModal} transparent animationType="fade" onRequestClose={() => setShowInviteModal(false)}>
         <Pressable style={styles.modalOverlay} onPress={() => setShowInviteModal(false)}>
-          <View style={[styles.modalContent, { backgroundColor: theme.surface }]}>
+          <View style={[styles.modalContent, { backgroundColor: theme.glass, borderColor: theme.glassBorder }]}>
             <View style={styles.modalHeader}>
                 <Ionicons name="people" size={32} color={theme.primary} />
                 <Text style={[styles.modalTitle, { color: theme.text, marginTop: 12 }]}>Invite Team</Text>
@@ -306,7 +306,7 @@ const TaskListScreen = ({ navigation }) => {
       {/* Theme Modal */}
       <Modal visible={showThemeModal} transparent animationType="fade" onRequestClose={() => setShowThemeModal(false)}>
         <Pressable style={styles.modalOverlay} onPress={() => setShowThemeModal(false)}>
-            <View style={[styles.modalContent, { backgroundColor: theme.surface }]}>
+            <View style={[styles.modalContent, { backgroundColor: theme.glass, borderColor: theme.glassBorder }]}>
                 <Text style={[styles.modalTitle, { color: theme.text }]}>Appearance</Text>
                 {['light', 'dark', 'system'].map((id) => (
                     <TouchableOpacity key={id} style={styles.themeOption} onPress={() => { toggleTheme(id); setShowThemeModal(false); }}>
@@ -325,6 +325,10 @@ const TaskListScreen = ({ navigation }) => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
+      {/* Background Decor */}
+      <View style={[styles.glow, { top: -100, left: -100, backgroundColor: theme.primary + '20' }]} />
+      <View style={[styles.glow, { bottom: 0, right: -150, backgroundColor: theme.primary + '15', width: 400, height: 400 }]} />
+
       <FlatList
         data={filteredTasks}
         keyExtractor={(item) => item._id}
@@ -365,8 +369,9 @@ const styles = StyleSheet.create({
   filterList: { paddingHorizontal: 20, gap: 8 },
   filterChip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, borderWidth: 1, marginRight: 8 },
   filterChipText: { fontSize: 14, fontWeight: '700' },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center' },
-  modalContent: { width: '85%', borderRadius: 24, padding: 24 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center' },
+  modalContent: { width: '85%', borderRadius: 28, padding: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  glow: { position: 'absolute', width: 300, height: 300, borderRadius: 150 },
   modalTitle: { fontSize: 22, fontWeight: '900', marginBottom: 20, textAlign: 'center' },
   modalHeader: { alignItems: 'center' },
   modalSubtitle: { fontSize: 15, textAlign: 'center', lineHeight: 22, marginBottom: 24 },
