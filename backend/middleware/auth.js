@@ -44,6 +44,8 @@ const protect = async (req, res, next) => {
       }
 
       req.user = user;
+      req.orgId = sessionClaims.org_id || req.headers['x-org-id'];
+      req.orgRole = sessionClaims.org_role || req.headers['x-org-role'];
       next();
     } catch (error) {
       console.error('Clerk Auth Error:', error.message);

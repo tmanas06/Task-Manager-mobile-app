@@ -25,6 +25,11 @@ const taskSchema = new mongoose.Schema(
       ref: 'User',
       required: [true, 'Task must be assigned to a user'],
     },
+    organizationId: {
+      type: String,
+      required: true,
+      index: true,
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

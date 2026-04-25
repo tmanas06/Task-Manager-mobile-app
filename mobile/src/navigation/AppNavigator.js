@@ -11,6 +11,8 @@ import TaskListScreen from '../screens/TaskListScreen';
 import TaskDetailScreen from '../screens/TaskDetailScreen';
 import CreateTaskScreen from '../screens/CreateTaskScreen';
 
+import OrganizationScreen from '../screens/OrganizationScreen';
+
 const Stack = createStackNavigator();
 
 const AuthStack = ({ theme }) => (
@@ -23,6 +25,17 @@ const AuthStack = ({ theme }) => (
     }}
   >
     <Stack.Screen name="Login" component={LoginScreen} />
+  </Stack.Navigator>
+);
+
+const OrganizationStack = ({ theme }) => (
+  <Stack.Navigator
+    screenOptions={{
+      headerShown: false,
+      cardStyle: { backgroundColor: theme.background },
+    }}
+  >
+    <Stack.Screen name="Organization" component={OrganizationScreen} />
   </Stack.Navigator>
 );
 
@@ -42,7 +55,7 @@ const MainStack = ({ theme }) => (
 );
 
 const AppNavigator = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, activeOrganization, isLoading } = useAuth();
   const { theme } = useTheme();
 
   if (isLoading) {
@@ -61,7 +74,13 @@ const AppNavigator = () => {
             notification: theme.primary,
         }
     }}>
-      {isAuthenticated ? <MainStack theme={theme} /> : <AuthStack theme={theme} />}
+      {!isAuthenticated ? (
+        <AuthStack theme={theme} />
+      ) : !activeOrganization ? (
+        <OrganizationStack theme={theme} />
+      ) : (
+        <MainStack theme={theme} />
+      )}
     </NavigationContainer>
   );
 };

@@ -1,61 +1,86 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useAuth as useClerkAuth, useUser } from '@clerk/clerk-expo';
+import { useAuth as useClerkAuth, useUser, useOrganization, useOrganizationList } from '@clerk/clerk-expo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loginWithClerk } from '../api/auth';
+import { syncOrganization as apiSyncOrg } from '../api/orgs';
 
 const AuthContext = createContext();
-
-export const useAuthContext = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuthContext must be used within an AuthProvider');
-  }
-  return context;
-};
 
 export const AuthProvider = ({ children }) => {
   const { isLoaded, isSignedIn, getToken, signOut } = useClerkAuth();
   const { user: clerkUser } = useUser();
+  const { organization: activeOrg, isLoaded: orgLoaded } = useOrganization();
+  const { userMemberships, isLoaded: listLoaded } = useOrganizationList({
+    userMemberships: true,
+  });
+
   const [user, setUser] = useState(null);
+  const [activeOrgDetails, setActiveOrgDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const isAdmin = user?.role === 'admin';
+  // Derive admin role from organization membership
+  const isAdmin = activeOrgDetails?.clerkOrgId && (
+    user?.role === 'admin' || 
+    userMemberships.data?.find(m => m.organization.id === activeOrg?.id)?.role === 'org:admin'
+  );
 
   useEffect(() => {
-    const syncUserWithBackend = async () => {
+    let isMounted = true;
+
+    const syncUserAndOrg = async () => {
       if (isLoaded && isSignedIn && clerkUser) {
         try {
-          const storedToken = await AsyncStorage.getItem('authToken');
-          if (!storedToken || !user) {
-            const token = await getToken();
+          const token = await getToken();
+          if (!token) return;
+
+          // Only sync user if we don't have one or if it's a new session
+          if (!user) {
             const response = await loginWithClerk(token, clerkUser);
-            
-            if (response.success) {
-              const authToken = response.data.token;
-              await AsyncStorage.setItem('authToken', authToken);
+            if (response.success && isMounted) {
+              await AsyncStorage.setItem('authToken', response.data.token);
               setUser(response.data.user);
             }
           }
+
+          // Sync Organization details if one is active
+          if (activeOrg && orgLoaded) {
+            await AsyncStorage.setItem('activeOrgId', activeOrg.id);
+            if (activeOrgDetails?.clerkOrgId !== activeOrg.id) {
+              const orgResponse = await apiSyncOrg(activeOrg.id, activeOrg.name);
+              if (orgResponse.success && isMounted) {
+                setActiveOrgDetails(orgResponse.data);
+              }
+            }
+          } else if (activeOrgDetails !== null && isMounted) {
+            await AsyncStorage.removeItem('activeOrgId');
+            setActiveOrgDetails(null);
+          }
         } catch (error) {
-          console.error('Failed to sync user with backend:', error);
+          console.error('Failed to sync auth with backend:', error);
         } finally {
-          setIsLoading(false);
+          if (isMounted) setIsLoading(false);
         }
       } else if (isLoaded && !isSignedIn) {
         await AsyncStorage.removeItem('authToken');
-        setUser(null);
-        setIsLoading(false);
+        if (isMounted) {
+          setUser(null);
+          setActiveOrgDetails(null);
+          setIsLoading(false);
+        }
       }
     };
 
-    syncUserWithBackend();
-  }, [isLoaded, isSignedIn, clerkUser]);
+    syncUserAndOrg();
+
+    return () => { isMounted = false; };
+  }, [isLoaded, isSignedIn, clerkUser, activeOrg, orgLoaded]);
 
   const logout = async () => {
     try {
       await signOut();
       await AsyncStorage.removeItem('authToken');
       setUser(null);
+      setActiveOrgDetails(null);
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -65,10 +90,10 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
+        activeOrganization: activeOrgDetails,
         isAdmin,
         isAuthenticated: isSignedIn,
-        isLoading: !isLoaded || isLoading,
-        isSignedIn,
+        isLoading: !isLoaded || (isSignedIn && (!orgLoaded || !listLoaded)) || isLoading,
         logout,
       }}
     >

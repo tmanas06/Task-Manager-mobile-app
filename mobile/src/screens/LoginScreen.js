@@ -140,6 +140,20 @@ const LoginScreen = () => {
           >
             {loadingProvider === 'verify' ? <ActivityIndicator color="#FFF" /> : <Text style={styles.loginButtonText}>VERIFY</Text>}
           </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={{ marginTop: 20, alignItems: 'center' }} 
+            onPress={async () => {
+              try {
+                await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+                Alert.alert('Code Resent', 'A new verification code has been sent to your email.');
+              } catch (err) {
+                Alert.alert('Error', err.errors?.[0]?.message || 'Failed to resend code');
+              }
+            }}
+          >
+            <Text style={{ color: theme.textSecondary, fontWeight: '700', fontSize: 13 }}>DIN'T RECEIVE CODE? RESEND</Text>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     );

@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // ⚠️ Update this to your backend server address
 // For Android emulator use: http://10.0.2.2:5000
 // For iOS simulator / physical device use your machine's local IP: http://192.168.x.x:5000
-const BASE_URL = 'http://10.98.47.233:5001/api';
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://10.98.47.233:5001/api';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -21,6 +21,10 @@ api.interceptors.request.use(
       const token = await AsyncStorage.getItem('authToken');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+      }
+      const orgId = await AsyncStorage.getItem('activeOrgId');
+      if (orgId) {
+        config.headers['x-org-id'] = orgId;
       }
     } catch (error) {
       console.error('Error reading token from storage:', error);
