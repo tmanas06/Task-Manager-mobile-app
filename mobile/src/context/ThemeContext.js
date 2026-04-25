@@ -46,6 +46,8 @@ export const ThemeProvider = ({ children }) => {
       warning: '#F59E0B',
       card: '#FFFFFF',
       shadow: '#000000',
+      glass: 'rgba(255, 255, 255, 0.7)',
+      glassBorder: 'rgba(255, 255, 255, 0.8)',
     },
     dark: {
       background: '#000000',
@@ -60,6 +62,8 @@ export const ThemeProvider = ({ children }) => {
       warning: '#FBBF24',
       card: '#121212',
       shadow: '#000000',
+      glass: 'rgba(30, 30, 30, 0.6)',
+      glassBorder: 'rgba(255, 255, 255, 0.15)',
     },
   };
 

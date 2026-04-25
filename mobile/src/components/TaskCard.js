@@ -60,8 +60,8 @@ const TaskCard = ({ task, onPress, index = 0 }) => {
         style={[
             styles.card, 
             { 
-                backgroundColor: theme.card, 
-                borderColor: theme.border, 
+                backgroundColor: theme.glass, 
+                borderColor: theme.glassBorder, 
                 shadowColor: theme.shadow 
             }
         ]}
