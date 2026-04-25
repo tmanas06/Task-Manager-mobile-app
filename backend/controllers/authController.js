@@ -107,7 +107,21 @@ const clerkLogin = async (req, res) => {
     }
 
     // Find or create user locally
+    // 1. Check by clerkId
     let user = await User.findOne({ clerkId: clerkUser.id });
+
+    // 2. Fallback: Check by email (to link seeded or pre-existing users)
+    if (!user) {
+      const email = clerkUser.primaryEmailAddress || clerkUser.emailAddress;
+      user = await User.findOne({ email });
+      
+      if (user) {
+        // Link the existing user with the new Clerk ID
+        user.clerkId = clerkUser.id;
+        await user.save();
+        console.log(`Lined existing user ${email} with Clerk ID ${clerkUser.id}`);
+      }
+    }
 
     if (!user) {
       // Check if this is the first user

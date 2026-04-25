@@ -222,7 +222,7 @@ const TaskListScreen = ({ navigation }) => {
                 {[
                     { id: 'light', label: 'Light', icon: 'sunny' },
                     { id: 'dark', label: 'Dark', icon: 'moon' },
-                    { id: 'system', label: 'System', icon: 'ios-settings' },
+                    { id: 'system', label: 'System', icon: 'settings-outline' },
                 ].map((item) => (
                     <TouchableOpacity
                         key={item.id}

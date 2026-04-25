@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useAuth as useClerkAuth, useUser } from '@clerk/clerk-expo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loginWithClerk } from '../api/auth';
 
 const AuthContext = createContext();
@@ -28,6 +29,8 @@ export const AuthProvider = ({ children }) => {
           const response = await loginWithClerk(token, clerkUser);
           
           if (response.success) {
+            const authToken = response.data.token;
+            await AsyncStorage.setItem('authToken', authToken);
             setUser(response.data.user);
           }
         } catch (error) {
@@ -36,6 +39,7 @@ export const AuthProvider = ({ children }) => {
           setIsLoading(false);
         }
       } else if (isLoaded && !isSignedIn) {
+        await AsyncStorage.removeItem('authToken');
         setUser(null);
         setIsLoading(false);
       }
@@ -47,6 +51,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await signOut();
+      await AsyncStorage.removeItem('authToken');
       setUser(null);
     } catch (error) {
       console.error('Logout error:', error);
