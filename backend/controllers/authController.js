@@ -144,7 +144,7 @@ const clerkLogin = async (req, res) => {
     }
 
     // Determine role from Clerk Org if possible (User might be admin in Clerk but not in DB)
-    const isClerkAdmin = req.body.orgRole === 'org:admin';
+    const isClerkAdmin = req.body.orgRole === 'org:admin' || req.body.orgRole === 'admin';
 
     if (!user) {
       // Check if this is the first user
