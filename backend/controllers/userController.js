@@ -40,13 +40,23 @@ const getAllUsers = async (req, res) => {
     // 2. Find those users in our DB
     const users = await User.find({ 
       clerkId: { $in: clerkUserIds } 
-    }).select('name email role clerkId').sort({ name: 1 });
+    }).select('name email role clerkId').lean();
+
+    // 3. Map Clerk roles to users
+    const usersWithRoles = users.map(u => {
+      const membership = memberships.find(m => m.publicUserData.userId === u.clerkId);
+      return {
+        ...u,
+        role: (membership?.role === 'org:admin') ? 'admin' : 'user',
+        orgRole: membership?.role || 'org:member'
+      };
+    }).sort((a, b) => a.name.localeCompare(b.name));
 
     res.status(200).json({
       success: true,
       message: 'Users fetched successfully.',
-      data: users,
-      count: users.length,
+      data: usersWithRoles,
+      count: usersWithRoles.length,
     });
   } catch (error) {
     console.error('Get All Users Error:', error.message);
