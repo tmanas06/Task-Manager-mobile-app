@@ -77,7 +77,52 @@ const joinByCode = async (req, res) => {
   }
 };
 
+// @desc    Update a member's role in the organization
+// @route   PATCH /api/orgs/members/:userId/role
+const updateMemberRole = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { role } = req.body; // e.g. 'org:admin' or 'org:member'
+    const orgId = req.orgId;
+
+    if (!orgId) {
+        return res.status(400).json({ success: false, message: 'No active workspace found' });
+    }
+
+    if (!['org:admin', 'org:member'].includes(role)) {
+        return res.status(400).json({ success: false, message: 'Invalid role' });
+    }
+
+    // 1. Verify that the requester is an admin in this org
+    const requesterMembership = await clerkClient.organizations.getOrganizationMembershipList({ 
+        organizationId: orgId 
+    });
+    const requester = requesterMembership.find(m => m.publicUserData.userId === req.user.clerkId);
+    
+    if (!requester || requester.role !== 'org:admin') {
+        return res.status(403).json({ success: false, message: 'Unauthorized. Only admins can change roles.' });
+    }
+
+    // 2. Update the role via Clerk
+    const membership = await clerkClient.organizations.updateOrganizationMembership({
+        organizationId: orgId,
+        userId: userId,
+        role: role,
+    });
+
+    res.status(200).json({
+        success: true,
+        message: 'Member role updated successfully',
+        data: membership,
+    });
+  } catch (error) {
+    console.error('Update Role Error:', error.message);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   syncOrganization,
   joinByCode,
+  updateMemberRole,
 };

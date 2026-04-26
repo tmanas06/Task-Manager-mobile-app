@@ -17,3 +17,12 @@ export const joinByCode = async (joinCode) => {
     throw error;
   }
 };
+
+export const updateMemberRole = async (userId, role) => {
+  try {
+    const response = await api.patch(`/orgs/members/${userId}/role`, { role });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
