@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   TextInput,
   Alert,
+  Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
@@ -177,7 +178,14 @@ const LoginScreen = () => {
       {renderBackground()}
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <Text style={[styles.appName, { color: theme.text }]}>TASKMANAGER</Text>
+            <View style={[styles.logoWrapper, { backgroundColor: theme.primary + '15', borderColor: theme.primary + '30' }]}>
+                <Image 
+                    source={require('../../assets/logo.png')}
+                    style={styles.logoImage}
+                    resizeMode="contain"
+                />
+            </View>
+          <Text style={[styles.appName, { color: theme.text }]}>TaskFlow</Text>
           <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
             {isSignUp ? 'Professional Onboarding' : 'Enterprise productivity platform'}
           </Text>
@@ -277,8 +285,9 @@ const styles = StyleSheet.create({
   scrollContent: { flexGrow: 1, justifyContent: 'center', padding: 24, paddingTop: 60 },
   glowBlob: { position: 'absolute', borderRadius: 200, opacity: 1 },
   header: { alignItems: 'center', marginBottom: 40, marginTop: 40 },
-  logoIcon: { width: 64, height: 64, borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginBottom: 20, elevation: 15, shadowColor: '#3B82F6', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.5, shadowRadius: 15 },
-  appName: { fontSize: 32, fontWeight: '900', letterSpacing: 4, marginBottom: 8 },
+  logoWrapper: { width: 100, height: 100, justifyContent: 'center', alignItems: 'center', marginBottom: 12 },
+  logoImage: { width: 80, height: 80 },
+  appName: { fontSize: 36, fontWeight: '900', letterSpacing: -1.5, marginBottom: 4 },
   subtitle: { fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 2, opacity: 0.8 },
   errorBanner: { flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 16, marginBottom: 24, borderWidth: 1 },
   errorText: { fontSize: 13, fontWeight: '700', marginLeft: 10, flex: 1 },

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "TaskManager",
+    "name": "TaskFlow",
     "slug": "taskmanager",
     "scheme": "taskmanager",
     "version": "1.0.0",
@@ -15,9 +15,14 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#0F172A"
+        "backgroundColor": "#000000"
       },
       "package": "com.taskmanager.app"
+    },
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
     },
     "plugins": [
       "expo-font",
