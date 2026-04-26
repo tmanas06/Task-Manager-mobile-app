@@ -19,7 +19,7 @@ const WorkspaceScreen = ({ navigation }) => {
   const shareInvite = async () => {
     if (!activeOrganization?.joinCode) return;
     try {
-      const message = `Join my workspace "${activeOrganization.name}" on TaskManager!\n\nJoin Code: ${activeOrganization.joinCode}`;
+      const message = `Join my workspace "${activeOrganization.name}" on TaskFlow!\n\nJoin Code: ${activeOrganization.joinCode}`;
       await Share.share({
         message,
         title: `Invite to ${activeOrganization.name}`,
@@ -27,6 +27,17 @@ const WorkspaceScreen = ({ navigation }) => {
     } catch (error) {
       Alert.alert('Error', 'Failed to share invite.');
     }
+  };
+
+  const handleLeaveWorkspace = () => {
+    Alert.alert(
+      'Leave Workspace',
+      'Are you sure you want to sign out of this workspace?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Sign Out', style: 'destructive', onPress: logout },
+      ]
+    );
   };
 
   return (
@@ -80,20 +91,9 @@ const WorkspaceScreen = ({ navigation }) => {
             <Ionicons name="chevron-forward" size={18} color={theme.textSecondary} />
           </TouchableOpacity>
 
-          {/* <TouchableOpacity
-            style={[styles.actionRow, { backgroundColor: theme.glass, borderColor: theme.glassBorder }]}
-            onPress={() => Alert.alert('Coming Soon', 'Individual project management is under development.')}
-          >
-            <View style={[styles.iconBox, { backgroundColor: '#FFEE0015' }]}>
-              <Ionicons name="folder-open-outline" size={22} color="#F59E0B" />
-            </View>
-            <Text style={[styles.actionLabel, { color: theme.text }]}>Project Settings</Text>
-            <Ionicons name="chevron-forward" size={18} color={theme.textSecondary} />
-          </TouchableOpacity> */}
-
           <TouchableOpacity
             style={[styles.actionRow, { backgroundColor: theme.glass, borderColor: theme.glassBorder }]}
-            onPress={logout}
+            onPress={handleLeaveWorkspace}
           >
             <View style={[styles.iconBox, { backgroundColor: '#EF444415' }]}>
               <Ionicons name="log-out-outline" size={22} color="#EF4444" />
@@ -104,8 +104,7 @@ const WorkspaceScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.footer}>
-          <Text style={[styles.versionText, { color: theme.textSecondary }]}>TaskManager v1.0.0</Text>
-          {/* <Text style={[styles.versionText, { color: theme.textSecondary, marginTop: 4 }]}>Created with ⚡ by webyalaya</Text> */}
+          <Text style={[styles.versionText, { color: theme.textSecondary }]}>TaskFlow v1.0.0</Text>
         </View>
       </ScrollView>
     </View>

@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // ⚠️ Update this to your backend server address
 // For Android emulator use: http://10.0.2.2:5000
 // For iOS simulator / physical device use your machine's local IP: http://192.168.x.x:5000
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://10.98.47.233:5001/api';
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://task-manager-mobile-app.vercel.app/api';
 
 const api = axios.create({
   baseURL: BASE_URL,
