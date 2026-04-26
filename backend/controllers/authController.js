@@ -170,10 +170,14 @@ const clerkLogin = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Clerk Login Error:', error);
+    console.error('Clerk Login Error [Detail]:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     res.status(500).json({
       success: false,
-      message: 'Server error during Clerk login.',
+      message: `Server error during Clerk login: ${error.message}`,
     });
   }
 };

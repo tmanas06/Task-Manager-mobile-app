@@ -5,7 +5,7 @@
     "scheme": "taskmanager",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.png",
+    "icon": "./assets/app_icon.png",
     "userInterfaceStyle": "dark",
     "assetBundlePatterns": [
       "**/*"
@@ -16,6 +16,7 @@
     },
     "android": {
       "adaptiveIcon": {
+        "foregroundImage": "./assets/app_icon.png",
         "backgroundColor": "#000000"
       },
       "package": "com.taskmanager.app"

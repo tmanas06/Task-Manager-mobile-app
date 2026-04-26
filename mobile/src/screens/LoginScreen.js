@@ -183,7 +183,7 @@ const LoginScreen = () => {
         <View style={styles.header}>
             <View style={styles.logoWrapper}>
                 <Image 
-                    source={require('../../assets/logo.png')}
+                    source={require('../../assets/app_icon.png')}
                     style={styles.logoImage}
                     resizeMode="contain"
                 />
