@@ -115,7 +115,7 @@ const WorkspaceScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   glow: { position: 'absolute', borderRadius: 200 },
-  header: { flexDirection: 'row', alignItems: 'center', paddingTop: 60, paddingBottom: 20, paddingHorizontal: 16 },
+  header: { flexDirection: 'row', alignItems: 'center', paddingTop: 40, paddingBottom: 20, paddingHorizontal: 16 },
   backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
   headerTitle: { flex: 1, fontSize: 18, fontWeight: '800', textAlign: 'center' },
   placeholder: { width: 40 },

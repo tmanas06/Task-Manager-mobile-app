@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   flex: { flex: 1 },
   glow: { position: 'absolute', width: 300, height: 300, borderRadius: 150 },
-  header: { flexDirection: 'row', alignItems: 'center', paddingTop: 60, paddingBottom: 16, paddingHorizontal: 16, borderBottomWidth: 1 },
+  header: { flexDirection: 'row', alignItems: 'center', paddingTop: 40, paddingBottom: 16, paddingHorizontal: 16, borderBottomWidth: 1 },
   backButton: { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
   headerTitle: { flex: 1, fontSize: 20, fontWeight: '900', textAlign: 'center' },
   placeholder: { width: 40 },
