@@ -69,7 +69,7 @@ const WorkspaceScreen = ({ navigation }) => {
 
         {/* Quick Actions */}
         <View style={styles.actionsContainer}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.actionRow, { backgroundColor: theme.glass, borderColor: theme.glassBorder }]}
             onPress={() => navigation.navigate('Team')}
           >
@@ -80,7 +80,7 @@ const WorkspaceScreen = ({ navigation }) => {
             <Ionicons name="chevron-forward" size={18} color={theme.textSecondary} />
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          {/* <TouchableOpacity
             style={[styles.actionRow, { backgroundColor: theme.glass, borderColor: theme.glassBorder }]}
             onPress={() => Alert.alert('Coming Soon', 'Individual project management is under development.')}
           >
@@ -89,9 +89,9 @@ const WorkspaceScreen = ({ navigation }) => {
             </View>
             <Text style={[styles.actionLabel, { color: theme.text }]}>Project Settings</Text>
             <Ionicons name="chevron-forward" size={18} color={theme.textSecondary} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.actionRow, { backgroundColor: theme.glass, borderColor: theme.glassBorder }]}
             onPress={logout}
           >
@@ -105,7 +105,7 @@ const WorkspaceScreen = ({ navigation }) => {
 
         <View style={styles.footer}>
           <Text style={[styles.versionText, { color: theme.textSecondary }]}>TaskManager v1.0.0</Text>
-          <Text style={[styles.versionText, { color: theme.textSecondary, marginTop: 4 }]}>Created with ⚡ by webyalaya</Text>
+          {/* <Text style={[styles.versionText, { color: theme.textSecondary, marginTop: 4 }]}>Created with ⚡ by webyalaya</Text> */}
         </View>
       </ScrollView>
     </View>
