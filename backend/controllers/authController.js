@@ -106,16 +106,18 @@ const clerkLogin = async (req, res) => {
       });
     }
 
-    // Extract email from Clerk's potentially complex object structure
+    // Extract email robustly (Mobile sends as string, Backend logic expects object)
     let email = null;
     if (typeof clerkUser.primaryEmailAddress === 'string') {
       email = clerkUser.primaryEmailAddress;
     } else if (clerkUser.primaryEmailAddress?.emailAddress) {
       email = clerkUser.primaryEmailAddress.emailAddress;
-    } else if (clerkUser.emailAddress) {
-      email = clerkUser.emailAddress;
-    } else if (Array.isArray(clerkUser.emailAddresses) && clerkUser.emailAddresses.length > 0) {
-      email = clerkUser.emailAddresses[0].emailAddress;
+    } else if (clerkUser.email || clerkUser.emailAddress) {
+      email = clerkUser.email || clerkUser.emailAddress;
+    }
+
+    if (!email && Array.isArray(clerkUser.emailAddresses)) {
+      email = clerkUser.emailAddresses[0]?.emailAddress;
     }
 
     // Extract name
