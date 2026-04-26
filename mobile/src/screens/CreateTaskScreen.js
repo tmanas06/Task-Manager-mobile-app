@@ -43,7 +43,8 @@ const CreateTaskScreen = ({ navigation }) => {
         }
       }
     } catch (err) {
-      Alert.alert('Error', 'Failed to load users for assignment.');
+      console.error('Load Users Error:', err);
+      Alert.alert('Error', 'Failed to load team members for assignment. Please ensure you have an active workspace.');
     } finally {
       setIsLoadingUsers(false);
     }
@@ -98,8 +99,12 @@ const CreateTaskScreen = ({ navigation }) => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
+        {/* Background Decor */}
+        <View style={[styles.glow, { top: -100, left: -100, backgroundColor: theme.primary + '20' }]} />
+        <View style={[styles.glow, { bottom: 0, right: -150, backgroundColor: theme.primary + '15', width: 400, height: 400 }]} />
+
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: theme.surface, borderBottomColor: theme.border }]}>
+      <View style={[styles.header, { borderBottomColor: theme.border }]}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={24} color={theme.text} />
         </TouchableOpacity>
@@ -110,6 +115,7 @@ const CreateTaskScreen = ({ navigation }) => {
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
         <ScrollView
           style={styles.flex}
@@ -118,123 +124,126 @@ const CreateTaskScreen = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
         >
           {error ? (
-            <View style={[styles.errorBanner, { backgroundColor: '#FEE2E2', borderColor: '#FCA5A5' }]}>
+            <View style={[styles.errorBanner, { backgroundColor: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.2)' }]}>
               <Ionicons name="alert-circle" size={18} color="#EF4444" />
-              <Text style={[styles.errorText, { color: '#B91C1C' }]}>{error}</Text>
+              <Text style={[styles.errorText, { color: '#EF4444' }]}>{error}</Text>
             </View>
           ) : null}
 
-          {/* Title */}
-          <View style={styles.inputGroup}>
-            <Text style={[styles.inputLabel, { color: theme.textSecondary }]}>TITLE</Text>
-            <TextInput
-              style={[styles.input, { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }]}
-              placeholder="Enter task title"
-              placeholderTextColor={theme.textSecondary}
-              value={title}
-              onChangeText={(text) => {
-                setTitle(text);
-                setError('');
-              }}
-              maxLength={100}
-            />
-            <Text style={[styles.charCount, { color: theme.textSecondary }]}>{title.length}/100</Text>
-          </View>
-
-          {/* Description */}
-          <View style={styles.inputGroup}>
-            <Text style={[styles.inputLabel, { color: theme.textSecondary }]}>DESCRIPTION</Text>
-            <TextInput
-              style={[styles.input, styles.textArea, { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }]}
-              placeholder="Task description (optional)"
-              placeholderTextColor={theme.textSecondary}
-              value={description}
-              onChangeText={setDescription}
-              multiline
-              numberOfLines={4}
-              maxLength={500}
-            />
-            <Text style={[styles.charCount, { color: theme.textSecondary }]}>{description.length}/500</Text>
-          </View>
-
-          {/* Status Selection */}
-          <View style={styles.inputGroup}>
-            <Text style={[styles.inputLabel, { color: theme.textSecondary }]}>STATUS</Text>
-            <View style={styles.statusContainer}>
-              {STATUS_OPTIONS.map((s) => (
-                <TouchableOpacity
-                  key={s}
-                  style={[
-                    styles.statusChip,
-                    { backgroundColor: theme.surface, borderColor: theme.border },
-                    status === s && { backgroundColor: getStatusColor(s) + '15', borderColor: getStatusColor(s), borderWidth: 2 },
-                  ]}
-                  onPress={() => setStatus(s)}
-                  activeOpacity={0.7}
-                >
-                  <Text
-                    style={[
-                      styles.statusChipText,
-                      { color: theme.textSecondary },
-                      status === s && { color: getStatusColor(s), fontWeight: '800' },
-                    ]}
-                  >
-                    {getStatusLabel(s)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+          <View style={[styles.glassCard, { backgroundColor: theme.glass, borderColor: theme.glassBorder }]}>
+            {/* Title */}
+            <View style={styles.inputGroup}>
+                <Text style={[styles.inputLabel, { color: theme.textSecondary }]}>TASK TITLE</Text>
+                <TextInput
+                style={[styles.input, { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: theme.glassBorder, color: theme.text }]}
+                placeholder="Enter task title"
+                placeholderTextColor={theme.textSecondary}
+                value={title}
+                onChangeText={(text) => {
+                    setTitle(text);
+                    setError('');
+                }}
+                maxLength={100}
+                />
+                <Text style={[styles.charCount, { color: theme.textSecondary }]}>{title.length}/100</Text>
             </View>
-          </View>
 
-          {/* Assign To */}
-          <View style={styles.inputGroup}>
-            <Text style={[styles.inputLabel, { color: theme.textSecondary }]}>ASSIGN TO</Text>
-            {isLoadingUsers ? (
-              <View style={styles.loadingUsers}>
-                <ActivityIndicator size="small" color={theme.primary} />
-                <Text style={[styles.loadingUsersText, { color: theme.textSecondary }]}>Loading users...</Text>
-              </View>
-            ) : (
-              <View style={styles.userList}>
-                {users.map((u) => (
-                  <TouchableOpacity
-                    key={u._id}
+            {/* Description */}
+            <View style={styles.inputGroup}>
+                <Text style={[styles.inputLabel, { color: theme.textSecondary }]}>DESCRIPTION</Text>
+                <TextInput
+                style={[styles.input, styles.textArea, { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: theme.glassBorder, color: theme.text }]}
+                placeholder="What needs to be done?"
+                placeholderTextColor={theme.textSecondary}
+                value={description}
+                onChangeText={setDescription}
+                multiline
+                numberOfLines={4}
+                maxLength={500}
+                />
+                <Text style={[styles.charCount, { color: theme.textSecondary }]}>{description.length}/500</Text>
+            </View>
+
+            {/* Status Selection */}
+            <View style={styles.inputGroup}>
+                <Text style={[styles.inputLabel, { color: theme.textSecondary }]}>STATUS</Text>
+                <View style={styles.statusContainer}>
+                {STATUS_OPTIONS.map((s) => (
+                    <TouchableOpacity
+                    key={s}
                     style={[
-                      styles.userOption,
-                      { backgroundColor: theme.surface, borderColor: theme.border },
-                      assignedTo === u._id && { borderColor: theme.primary, backgroundColor: theme.primary + '10' },
+                        styles.statusChip,
+                        { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: theme.glassBorder },
+                        status === s && { backgroundColor: getStatusColor(s) + '20', borderColor: getStatusColor(s), borderWidth: 2 },
                     ]}
-                    onPress={() => setAssignedTo(u._id)}
+                    onPress={() => setStatus(s)}
                     activeOpacity={0.7}
-                  >
-                    <View style={[styles.userRadio, { borderColor: theme.secondary }, assignedTo === u._id && { borderColor: theme.primary }]}>
-                      {assignedTo === u._id ? <View style={[styles.userRadioDot, { backgroundColor: theme.primary }]} /> : null}
-                    </View>
-                    <View style={styles.userInfo}>
-                      <Text style={[styles.userName, { color: theme.text }]}>{u.name}</Text>
-                      <Text style={[styles.userEmail, { color: theme.textSecondary }]}>{u.email} · {u.role}</Text>
-                    </View>
-                  </TouchableOpacity>
+                    >
+                    <Text
+                        style={[
+                        styles.statusChipText,
+                        { color: theme.textSecondary },
+                        status === s && { color: getStatusColor(s), fontWeight: '800' },
+                        ]}
+                    >
+                        {getStatusLabel(s)}
+                    </Text>
+                    </TouchableOpacity>
                 ))}
-              </View>
-            )}
-          </View>
+                </View>
+            </View>
 
-          {/* Submit Button */}
-          <TouchableOpacity
-            style={[styles.submitButton, { backgroundColor: theme.primary, shadowColor: theme.primary }, isSubmitting && styles.submitButtonDisabled]}
-            onPress={handleSubmit}
-            disabled={isSubmitting}
-            activeOpacity={0.8}
-          >
-            {isSubmitting ? (
-              <ActivityIndicator size="small" color="#FFFFFF" />
-            ) : (
-              <>
+            {/* Assign To */}
+            <View style={styles.inputGroup}>
+                <Text style={[styles.inputLabel, { color: theme.textSecondary }]}>ASSIGN TO</Text>
+                {isLoadingUsers ? (
+                <View style={styles.loadingUsers}>
+                    <ActivityIndicator size="small" color={theme.primary} />
+                    <Text style={[styles.loadingUsersText, { color: theme.textSecondary }]}>Fetching members...</Text>
+                </View>
+                ) : (
+                <View style={styles.userList}>
+                    {users.map((u) => (
+                    <TouchableOpacity
+                        key={u._id}
+                        style={[
+                        styles.userOption,
+                        { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: theme.glassBorder },
+                        assignedTo === u._id && { borderColor: theme.primary, backgroundColor: theme.primary + '15' },
+                        ]}
+                        onPress={() => setAssignedTo(u._id)}
+                        activeOpacity={0.7}
+                    >
+                        <View style={[styles.userRadio, { borderColor: theme.textSecondary }, assignedTo === u._id && { borderColor: theme.primary }]}>
+                        {assignedTo === u._id ? <View style={[styles.userRadioDot, { backgroundColor: theme.primary }]} /> : null}
+                        </View>
+                        <View style={styles.userInfo}>
+                            <Text style={[styles.userName, { color: theme.text }]}>{u.name}</Text>
+                            <Text style={[styles.userRoleText, { color: theme.textSecondary }]}>{u.email}</Text>
+                        </View>
+                    </TouchableOpacity>
+                    ))}
+                    {users.length === 0 && (
+                        <Text style={{ color: theme.textSecondary, fontStyle: 'italic' }}>No members found in this workspace.</Text>
+                    )}
+                </View>
+                )}
+            </View>
+
+            {/* Submit Button */}
+            <TouchableOpacity
+                style={[styles.submitButton, { backgroundColor: theme.primary, shadowColor: theme.primary }, isSubmitting && styles.submitButtonDisabled]}
+                onPress={handleSubmit}
+                disabled={isSubmitting}
+                activeOpacity={0.8}
+            >
+                {isSubmitting ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
                 <Text style={styles.submitButtonText}>CREATE TASK</Text>
-              </>
-            )}
-          </TouchableOpacity>
+                )}
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
@@ -242,159 +251,37 @@ const CreateTaskScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  flex: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: 56,
-    paddingBottom: 16,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: '800',
-    textAlign: 'center',
-  },
-  placeholder: {
-    width: 40,
-  },
-  scrollContent: {
-    padding: 24,
-    paddingBottom: 40,
-  },
-  errorBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 14,
-    borderRadius: 12,
-    marginBottom: 24,
-    borderWidth: 1,
-  },
-  errorText: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginLeft: 10,
-    flex: 1,
-  },
-  inputGroup: {
-    marginBottom: 28,
-  },
-  inputLabel: {
-    fontSize: 11,
-    fontWeight: '800',
-    letterSpacing: 1.5,
-    marginBottom: 10,
-  },
-  input: {
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    borderWidth: 1,
-  },
-  textArea: {
-    minHeight: 120,
-    textAlignVertical: 'top',
-  },
-  charCount: {
-    fontSize: 11,
-    textAlign: 'right',
-    marginTop: 6,
-    fontWeight: '600',
-  },
-  statusContainer: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  statusChip: {
-    flex: 1,
-    paddingVertical: 14,
-    borderRadius: 10,
-    borderWidth: 1,
-    alignItems: 'center',
-  },
-  statusChipText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  loadingUsers: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    padding: 8,
-  },
-  loadingUsersText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  userList: {
-    gap: 10,
-  },
-  userOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 14,
-    borderWidth: 1,
-  },
-  userRadio: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 14,
-  },
-  userRadioDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-  },
-  userInfo: {
-    flex: 1,
-  },
-  userName: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  userEmail: {
-    fontSize: 13,
-    marginTop: 2,
-  },
-  submitButton: {
-    borderRadius: 14,
-    height: 58,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 12,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 6,
-  },
-  submitButtonDisabled: {
-    opacity: 0.7,
-  },
-  submitButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '900',
-    letterSpacing: 1,
-  },
+  container: { flex: 1 },
+  flex: { flex: 1 },
+  glow: { position: 'absolute', width: 300, height: 300, borderRadius: 150 },
+  header: { flexDirection: 'row', alignItems: 'center', paddingTop: 60, paddingBottom: 16, paddingHorizontal: 16, borderBottomWidth: 1 },
+  backButton: { width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
+  headerTitle: { flex: 1, fontSize: 20, fontWeight: '900', textAlign: 'center' },
+  placeholder: { width: 40 },
+  scrollContent: { padding: 20, paddingBottom: 40 },
+  errorBanner: { flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 16, marginBottom: 20, borderWidth: 1 },
+  errorText: { fontSize: 13, fontWeight: '700', marginLeft: 10, flex: 1 },
+  glassCard: { padding: 20, borderRadius: 28, borderWidth: 1 },
+  inputGroup: { marginBottom: 24 },
+  inputLabel: { fontSize: 11, fontWeight: '900', letterSpacing: 1.5, marginBottom: 10 },
+  input: { borderRadius: 14, padding: 16, fontSize: 16, borderWidth: 1 },
+  textArea: { minHeight: 100, textAlignVertical: 'top' },
+  charCount: { fontSize: 10, textAlign: 'right', marginTop: 6, fontWeight: '700' },
+  statusContainer: { flexDirection: 'row', gap: 8 },
+  statusChip: { flex: 1, paddingVertical: 12, borderRadius: 12, borderWidth: 1, alignItems: 'center' },
+  statusChipText: { fontSize: 12, fontWeight: '700' },
+  loadingUsers: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
+  loadingUsersText: { fontSize: 14, fontWeight: '600' },
+  userList: { gap: 8 },
+  userOption: { flexDirection: 'row', alignItems: 'center', padding: 14, borderRadius: 14, borderWidth: 1 },
+  userRadio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  userRadioDot: { width: 10, height: 10, borderRadius: 5 },
+  userInfo: { flex: 1 },
+  userName: { fontSize: 15, fontWeight: '700' },
+  userRoleText: { fontSize: 12, marginTop: 1 },
+  submitButton: { borderRadius: 16, height: 60, justifyContent: 'center', alignItems: 'center', marginTop: 12, elevation: 8, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.3, shadowRadius: 10 },
+  submitButtonDisabled: { opacity: 0.7 },
+  submitButtonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '900', letterSpacing: 2 },
 });
 
 export default CreateTaskScreen;

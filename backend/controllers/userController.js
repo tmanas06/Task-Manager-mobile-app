@@ -1,11 +1,46 @@
 const User = require('../models/User');
+const { createClerkClient } = require('@clerk/clerk-sdk-node');
 
-// @desc    Get all users (for admin task assignment picker)
-// @route   GET /api/users
-// @access  Private/Admin
+const secretKey = process.env.CLERK_SECRET_KEY || '';
+let clerkClient = null;
+if (secretKey && !secretKey.includes('REPLACE')) {
+    clerkClient = createClerkClient({ secretKey });
+}
+
+/**
+ * @desc    Get all users in the current organization
+ * @route   GET /api/users
+ * @access  Private
+ */
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().select('name email role').sort({ name: 1 });
+    const orgId = req.orgId;
+
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        message: 'A workspace must be active to fetch users.',
+      });
+    }
+
+    if (!clerkClient) {
+      return res.status(500).json({
+        success: false,
+        message: 'Clerk configuration missing.',
+      });
+    }
+
+    // 1. Fetch memberships from Clerk
+    const memberships = await clerkClient.organizations.getOrganizationMembershipList({ 
+      organizationId: orgId 
+    });
+
+    const clerkUserIds = memberships.map(m => m.publicUserData.userId);
+
+    // 2. Find those users in our DB
+    const users = await User.find({ 
+      clerkId: { $in: clerkUserIds } 
+    }).select('name email role clerkId').sort({ name: 1 });
 
     res.status(200).json({
       success: true,
@@ -17,7 +52,7 @@ const getAllUsers = async (req, res) => {
     console.error('Get All Users Error:', error.message);
     res.status(500).json({
       success: false,
-      message: 'Server error while fetching users.',
+      message: 'Server error while fetching organization members.',
     });
   }
 };

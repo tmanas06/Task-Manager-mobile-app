@@ -163,9 +163,15 @@ const TaskListScreen = ({ navigation }) => {
         <View style={styles.headerActions}>
             <TouchableOpacity 
                 style={[styles.actionButton, { backgroundColor: theme.surface, borderColor: theme.border }]} 
-                onPress={() => setShowInviteModal(true)}
+                onPress={() => navigation.navigate('Workspace')}
             >
-                <Ionicons name="person-add-outline" size={20} color={theme.primary} />
+                <Ionicons name="settings-outline" size={20} color={theme.primary} />
+            </TouchableOpacity>
+            <TouchableOpacity 
+                style={[styles.actionButton, { backgroundColor: theme.surface, borderColor: theme.border }]} 
+                onPress={() => navigation.navigate('Team')}
+            >
+                <Ionicons name="people-outline" size={20} color={theme.primary} />
             </TouchableOpacity>
             <TouchableOpacity 
                 style={[styles.actionButton, { backgroundColor: theme.surface, borderColor: theme.border }]} 

@@ -12,6 +12,8 @@ import TaskDetailScreen from '../screens/TaskDetailScreen';
 import CreateTaskScreen from '../screens/CreateTaskScreen';
 
 import OrganizationScreen from '../screens/OrganizationScreen';
+import TeamScreen from '../screens/TeamScreen';
+import WorkspaceScreen from '../screens/WorkspaceScreen';
 
 const Stack = createStackNavigator();
 
@@ -51,6 +53,8 @@ const MainStack = ({ theme }) => (
     <Stack.Screen name="TaskList" component={TaskListScreen} />
     <Stack.Screen name="TaskDetail" component={TaskDetailScreen} />
     <Stack.Screen name="CreateTask" component={CreateTaskScreen} />
+    <Stack.Screen name="Team" component={TeamScreen} />
+    <Stack.Screen name="Workspace" component={WorkspaceScreen} />
   </Stack.Navigator>
 );
 
