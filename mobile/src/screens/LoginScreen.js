@@ -6,17 +6,19 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   ActivityIndicator,
   TextInput,
   Alert,
   Image,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 import { useOAuth, useSignIn, useSignUp } from '@clerk/clerk-expo';
 import * as Linking from 'expo-linking';
 import { useTheme } from '../context/ThemeContext';
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -125,9 +127,9 @@ const LoginScreen = () => {
 
   if (pendingVerification) {
     return (
-      <KeyboardAvoidingView style={[styles.container, { backgroundColor: theme.background }]} behavior="padding">
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
         {renderBackground()}
-        <View style={styles.scrollContent}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.mainContent}>
           <View style={[styles.glassCard, { backgroundColor: theme.glass, borderColor: theme.glassBorder }]}>
             <Text style={[styles.appName, { color: theme.text, textAlign: 'center' }]}>VERIFY EMAIL</Text>
             <Text style={[styles.subtitle, { color: theme.textSecondary, textAlign: 'center', marginBottom: 40 }]}>
@@ -165,20 +167,21 @@ const LoginScreen = () => {
                 <Text style={{ color: theme.textSecondary, fontWeight: '700', fontSize: 13, letterSpacing: 1 }}>DIN'T RECEIVE CODE? RESEND</Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
     );
   }
 
   return (
-    <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: theme.background }]}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {renderBackground()}
-      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView
+        style={styles.mainContent}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
         <View style={styles.header}>
-            <View style={[styles.logoWrapper, { backgroundColor: theme.primary + '15', borderColor: theme.primary + '30' }]}>
+            <View style={styles.logoWrapper}>
                 <Image 
                     source={require('../../assets/logo.png')}
                     style={styles.logoImage}
@@ -275,37 +278,37 @@ const LoginScreen = () => {
         <View style={styles.footer}>
           <Text style={[styles.footerText, { color: theme.textSecondary }]}>Powering Hybrid Teams Globally</Text>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scrollContent: { flexGrow: 1, justifyContent: 'center', padding: 24, paddingTop: 60 },
+  mainContent: { flex: 1, justifyContent: 'center', padding: 24 },
   glowBlob: { position: 'absolute', borderRadius: 200, opacity: 1 },
-  header: { alignItems: 'center', marginBottom: 40, marginTop: 40 },
-  logoWrapper: { width: 100, height: 100, justifyContent: 'center', alignItems: 'center', marginBottom: 12 },
+  header: { alignItems: 'center', marginBottom: 30 },
+  logoWrapper: { width: 90, height: 90, justifyContent: 'center', alignItems: 'center', marginBottom: 10 },
   logoImage: { width: 80, height: 80 },
-  appName: { fontSize: 36, fontWeight: '900', letterSpacing: -1.5, marginBottom: 4 },
+  appName: { fontSize: 36, fontWeight: '900', letterSpacing: -1.5, marginBottom: 2 },
   subtitle: { fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 2, opacity: 0.8 },
-  errorBanner: { flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 16, marginBottom: 24, borderWidth: 1 },
+  errorBanner: { flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 14, marginBottom: 20, borderWidth: 1 },
   errorText: { fontSize: 13, fontWeight: '700', marginLeft: 10, flex: 1 },
-  glassCard: { padding: 24, borderRadius: 32, borderWidth: 1, width: '100%', elevation: 2 },
-  input: { borderRadius: 16, padding: 18, fontSize: 16, borderWidth: 1, marginBottom: 16, fontWeight: '600' },
-  loginButton: { borderRadius: 16, height: 64, justifyContent: 'center', alignItems: 'center', marginTop: 10, elevation: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 12 },
+  glassCard: { padding: 20, borderRadius: 28, borderWidth: 1, width: '100%', elevation: 2 },
+  input: { borderRadius: 14, padding: 16, fontSize: 15, borderWidth: 1, marginBottom: 12, fontWeight: '600' },
+  loginButton: { borderRadius: 14, height: 56, justifyContent: 'center', alignItems: 'center', marginTop: 8, elevation: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.3, shadowRadius: 10 },
   loginButtonText: { color: '#FFF', fontSize: 16, fontWeight: '900', letterSpacing: 2 },
   loginButtonDisabled: { opacity: 0.6 },
-  toggleButton: { marginTop: 24, alignItems: 'center', padding: 8 },
-  toggleText: { fontSize: 14, fontWeight: '700' },
-  dividerContainer: { flexDirection: 'row', alignItems: 'center', marginVertical: 32 },
+  toggleButton: { marginTop: 16, alignItems: 'center', padding: 4 },
+  toggleText: { fontSize: 13, fontWeight: '700' },
+  dividerContainer: { flexDirection: 'row', alignItems: 'center', marginVertical: 24 },
   dividerLine: { flex: 1, height: 1, opacity: 0.1 },
-  dividerText: { fontSize: 10, fontWeight: '900', marginHorizontal: 16, letterSpacing: 1.5, opacity: 0.5 },
-  socialContainer: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
-  socialButton: { flex: 1, height: 56, borderRadius: 16, borderWidth: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' },
-  socialButtonText: { marginLeft: 10, fontSize: 14, fontWeight: '800' },
-  footer: { marginTop: 40, alignItems: 'center', paddingBottom: 20 },
-  footerText: { fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1.5, opacity: 0.3 },
+  dividerText: { fontSize: 9, fontWeight: '900', marginHorizontal: 12, letterSpacing: 1.5, opacity: 0.5 },
+  socialContainer: { flexDirection: 'row', justifyContent: 'space-between', gap: 10 },
+  socialButton: { flex: 1, height: 50, borderRadius: 14, borderWidth: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' },
+  socialButtonText: { marginLeft: 8, fontSize: 13, fontWeight: '800' },
+  footer: { marginTop: 30, alignItems: 'center' },
+  footerText: { fontSize: 9, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1.5, opacity: 0.3 },
 });
 
 export default LoginScreen;
