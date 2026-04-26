@@ -16,10 +16,11 @@ export const login = async (userData) => {
   return response.data;
 };
 
-export const loginWithClerk = async (token, clerkUser) => {
+export const loginWithClerk = async (token, clerkUser, orgRole) => {
   try {
     const response = await api.post('/auth/clerk', {
       token,
+      orgRole,
       clerkUser: {
         id: clerkUser.id,
         fullName: clerkUser.fullName,

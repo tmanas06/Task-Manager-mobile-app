@@ -64,17 +64,13 @@ const createTask = async (req, res) => {
 // @access  Private
 const getAllTasks = async (req, res) => {
   try {
-    if (!req.orgId) {
-      return res.status(400).json({
-        success: false,
-        message: 'A workspace must be active to view tasks.',
-      });
-    }
+    // Determine active org ID with fallback to user's personal context
+    const activeOrgId = req.orgId || `personal-${req.user.id}`;
 
     // Build filter based on role
     // Admin sees everything in org, User views only assigned tasks
-    const filter = { organizationId: req.orgId };
-    if (req.user.role === 'user') {
+    const filter = { organizationId: activeOrgId };
+    if (req.user.role !== 'admin') {
       filter.assignedTo = req.user.id;
     }
 

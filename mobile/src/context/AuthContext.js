@@ -34,13 +34,12 @@ export const AuthProvider = ({ children }) => {
           const token = await getToken();
           if (!token) return;
 
-          // Sync User if state is missing or token is missing from storage
-          if (!user || !storedToken) {
-            const response = await loginWithClerk(token, clerkUser);
-            if (response.success && isMounted) {
-              await AsyncStorage.setItem('authToken', response.data.token);
-              setUser(response.data.user);
-            }
+          // Sync User and Role with backend on every session load/org change
+          const orgRole = userMemberships.data?.find(m => m.organization.id === activeOrg?.id)?.role;
+          const response = await loginWithClerk(token, clerkUser, orgRole);
+          if (response.success && isMounted) {
+            await AsyncStorage.setItem('authToken', response.data.token);
+            setUser(response.data.user);
           }
 
           // Sync Organization details if one is active

@@ -143,10 +143,16 @@ const clerkLogin = async (req, res) => {
       }
     }
 
+    // Determine role from Clerk Org if possible (User might be admin in Clerk but not in DB)
+    const isClerkAdmin = req.body.orgRole === 'org:admin';
+
     if (!user) {
       // Check if this is the first user
       const userCount = await User.countDocuments();
-      const role = userCount === 0 ? 'admin' : 'user';
+      let role = userCount === 0 ? 'admin' : 'user';
+      
+      // Override if Clerk says they are an admin
+      if (isClerkAdmin) role = 'admin';
 
       // Create new user using info from Clerk
       user = await User.create({
@@ -155,6 +161,13 @@ const clerkLogin = async (req, res) => {
         email: email,
         role: role,
       });
+    } else {
+      // Sync role if user exists but role is mismatched
+      if (isClerkAdmin && user.role !== 'admin') {
+        user.role = 'admin';
+        await user.save();
+        console.log(`Promoted user ${email} to admin based on Clerk org role.`);
+      }
     }
 
     res.status(200).json({
