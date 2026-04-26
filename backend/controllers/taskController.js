@@ -13,6 +13,14 @@ const createTask = async (req, res) => {
       });
     }
 
+    // Role-based restrict (Admin only)
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden: Only administrators can create tasks.',
+      });
+    }
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -63,7 +71,14 @@ const getAllTasks = async (req, res) => {
       });
     }
 
-    const tasks = await Task.find({ organizationId: req.orgId })
+    // Build filter based on role
+    // Admin sees everything in org, User views only assigned tasks
+    const filter = { organizationId: req.orgId };
+    if (req.user.role === 'user') {
+      filter.assignedTo = req.user.id;
+    }
+
+    const tasks = await Task.find(filter)
       .populate('assignedTo', 'name email role')
       .populate('createdBy', 'name')
       .sort({ createdAt: -1 });

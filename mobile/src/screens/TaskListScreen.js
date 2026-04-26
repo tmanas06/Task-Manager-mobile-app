@@ -210,14 +210,16 @@ const TaskListScreen = ({ navigation }) => {
         contentContainerStyle={styles.listContent}
       />
 
-      <Animated.View style={[styles.fabWrapper, { transform: [{ scale: fabScale }] }]}>
-        <TouchableOpacity 
-            style={[styles.fab, { backgroundColor: theme.primary, shadowColor: theme.primary }]} 
-            onPress={() => navigation.navigate('CreateTask')}
-        >
-          <Ionicons name="add" size={32} color="#FFF" />
-        </TouchableOpacity>
-      </Animated.View>
+      {isAdmin && (
+        <Animated.View style={[styles.fabWrapper, { transform: [{ scale: fabScale }] }]}>
+          <TouchableOpacity 
+              style={[styles.fab, { backgroundColor: theme.primary, shadowColor: theme.primary }]} 
+              onPress={() => navigation.navigate('CreateTask')}
+          >
+            <Ionicons name="add" size={32} color="#FFF" />
+          </TouchableOpacity>
+        </Animated.View>
+      )}
 
       {/* Org Switcher Modal */}
       <Modal visible={showOrgModal} transparent animationType="fade" onRequestClose={() => setShowOrgModal(false)}>
