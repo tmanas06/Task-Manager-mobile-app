@@ -1,5 +1,5 @@
 {
-  "name": "taskmanager-mobile",
+  "name": "taskflow",
   "version": "1.0.0",
   "main": "App.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@babel/runtime": "^7.29.2",
+    "@babel/runtime": "~7.24.0",
     "@clerk/clerk-expo": "^2.19.31",
     "@expo-google-fonts/inter": "^0.2.3",
     "@expo-google-fonts/space-grotesk": "^0.2.3",
@@ -32,6 +32,7 @@
     "expo-secure-store": "~13.0.2",
     "expo-splash-screen": "~0.27.5",
     "expo-status-bar": "~1.12.1",
+    "expo-updates": "~0.25.27",
     "expo-web-browser": "~13.0.3",
     "fast-text-encoding": "^1.0.6",
     "react": "18.2.0",

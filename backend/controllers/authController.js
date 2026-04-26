@@ -106,20 +106,38 @@ const clerkLogin = async (req, res) => {
       });
     }
 
+    // Extract email from Clerk's potentially complex object structure
+    let email = null;
+    if (typeof clerkUser.primaryEmailAddress === 'string') {
+      email = clerkUser.primaryEmailAddress;
+    } else if (clerkUser.primaryEmailAddress?.emailAddress) {
+      email = clerkUser.primaryEmailAddress.emailAddress;
+    } else if (clerkUser.emailAddress) {
+      email = clerkUser.emailAddress;
+    } else if (Array.isArray(clerkUser.emailAddresses) && clerkUser.emailAddresses.length > 0) {
+      email = clerkUser.emailAddresses[0].emailAddress;
+    }
+
+    // Extract name
+    const name = clerkUser.fullName || 
+                (clerkUser.firstName && clerkUser.lastName ? `${clerkUser.firstName} ${clerkUser.lastName}` : null) ||
+                clerkUser.firstName || 
+                clerkUser.username || 
+                'New User';
+
     // Find or create user locally
     // 1. Check by clerkId
     let user = await User.findOne({ clerkId: clerkUser.id });
 
     // 2. Fallback: Check by email (to link seeded or pre-existing users)
-    if (!user) {
-      const email = clerkUser.primaryEmailAddress || clerkUser.emailAddress;
+    if (!user && email) {
       user = await User.findOne({ email });
       
       if (user) {
         // Link the existing user with the new Clerk ID
         user.clerkId = clerkUser.id;
         await user.save();
-        console.log(`Lined existing user ${email} with Clerk ID ${clerkUser.id}`);
+        console.log(`Linked existing user ${email} with Clerk ID ${clerkUser.id}`);
       }
     }
 
@@ -131,8 +149,8 @@ const clerkLogin = async (req, res) => {
       // Create new user using info from Clerk
       user = await User.create({
         clerkId: clerkUser.id,
-        name: clerkUser.fullName || clerkUser.firstName || 'New User',
-        email: clerkUser.primaryEmailAddress || clerkUser.emailAddress,
+        name: name,
+        email: email,
         role: role,
       });
     }
